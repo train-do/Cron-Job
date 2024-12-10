@@ -1,0 +1,1323 @@
+basePath: /
+definitions:
+  domain.Banner:
+    properties:
+      endDate:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      isPublish:
+        type: boolean
+      pathPage:
+        type: string
+      startDate:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.BestSeller:
+    properties:
+      productID:
+        type: integer
+      totalSold:
+        type: integer
+    type: object
+  domain.Category:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - image
+    - name
+    type: object
+  domain.Image:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+      updated_at:
+        type: string
+      url_path:
+        type: string
+    type: object
+  domain.Product:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        items:
+          $ref: '#/definitions/domain.Image'
+        type: array
+      name:
+        minLength: 5
+        type: string
+      price:
+        type: number
+      product_variant:
+        items:
+          $ref: '#/definitions/domain.ProductVariant'
+        type: array
+      sku_product:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - description
+    - name
+    - price
+    - sku_product
+    type: object
+  domain.ProductVariant:
+    properties:
+      color:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      product_id:
+        type: integer
+      size:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  domain.Promotion:
+    properties:
+      description:
+        type: string
+      endDate:
+        type: string
+      id:
+        type: integer
+      isPublish:
+        type: boolean
+      limit:
+        type: integer
+      name:
+        type: string
+      startDate:
+        type: string
+      status:
+        $ref: '#/definitions/domain.status'
+      type:
+        $ref: '#/definitions/domain.Type'
+      voucherCode:
+        type: string
+    type: object
+  domain.ResponseStock:
+    properties:
+      currentStock:
+        type: integer
+      description:
+        type: string
+      product:
+        type: string
+      qty:
+        type: integer
+      variant:
+        $ref: '#/definitions/domain.SizeColor'
+    type: object
+  domain.Revenue:
+    properties:
+      month:
+        type: string
+      revenue:
+        type: integer
+    type: object
+  domain.SizeColor:
+    properties:
+      color:
+        type: string
+      size:
+        type: string
+    type: object
+  domain.Stock:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      productVariantId:
+        type: integer
+      qty:
+        type: integer
+    type: object
+  domain.Summary:
+    properties:
+      items:
+        type: integer
+      orders:
+        type: integer
+      sales:
+        type: integer
+      users:
+        type: integer
+    type: object
+  domain.Type:
+    enum:
+    - Voucher Code
+    - Direct Discount
+    type: string
+    x-enum-varnames:
+    - Voucher
+    - Discount
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        example: admin@mail.com
+        type: string
+      full_name:
+        type: string
+      password:
+        example: password
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.status:
+    enum:
+    - Active
+    - Inactive
+    type: string
+    x-enum-varnames:
+    - Active
+    - Inactive
+  handler.FormStock:
+    properties:
+      newStock:
+        type: integer
+    type: object
+  handler.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: lumoshive.academy@gmail.com
+    name: Team-1
+    url: https://academy.lumoshive.com/contact-us
+  description: Nothing.
+  license:
+    name: Lumoshive Academy
+    url: https://academy.lumoshive.com
+  termsOfService: http://example.com/terms/
+  title: Ecommerce Dashboard API
+  version: "1.0"
+paths:
+  /banner:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint Fetch All Banner
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get All Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Banner'
+                  type: array
+              type: object
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get All Banner
+      tags:
+      - Banner
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new banner with a title, path, start date, end date, and
+        image upload.
+      parameters:
+      - description: Banner Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Path Page
+        in: formData
+        name: pathPage
+        required: true
+        type: string
+      - description: Start Date (yyyy-mm-dd)
+        in: formData
+        name: startDate
+        required: true
+        type: string
+      - description: End Date (yyyy-mm-dd)
+        in: formData
+        name: endDate
+        required: true
+        type: string
+      - description: Banner Image
+        in: formData
+        name: images
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Banner successfully created
+          schema:
+            type: string
+        "400":
+          description: Invalid form data
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create a new Banner
+      tags:
+      - Banner
+  /banner/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a banner by its unique ID.
+      parameters:
+      - description: Banner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Banner successfully deleted
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Banner'
+              type: object
+        "400":
+          description: Invalid parameters or bad request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete a Banner
+      tags:
+      - Banner
+    get:
+      consumes:
+      - application/json
+      description: Get a banner details by its ID.
+      parameters:
+      - description: Banner ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Banner'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: Banner Not Found
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Banner by ID
+      tags:
+      - Banner
+    put:
+      consumes:
+      - multipart/form-data
+      description: Edit a new banner with a title, path, start date, end date, and
+        image upload.
+      parameters:
+      - description: Banner Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Path Page
+        in: formData
+        name: pathPage
+        required: true
+        type: string
+      - description: Start Date (yyyy-mm-dd)
+        in: formData
+        name: startDate
+        required: true
+        type: string
+      - description: End Date (yyyy-mm-dd)
+        in: formData
+        name: endDate
+        required: true
+        type: string
+      - description: Banner Image
+        in: formData
+        name: images
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Banner successfully created
+          schema:
+            type: string
+        "400":
+          description: Invalid form data
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Edit a new Banner
+      tags:
+      - Banner
+  /category:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all categories with pagination support
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Limit per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved categories
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Category'
+                  type: array
+              type: object
+        "404":
+          description: Failed to retrieve categories
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Show all categories
+      tags:
+      - Category
+    post:
+      consumes:
+      - multipart/form-data
+      description: Creates a new category with an image and name
+      parameters:
+      - description: Category Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Category Image
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Category created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Category'
+              type: object
+        "400":
+          description: Bad request, invalid data
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create a new category
+      tags:
+      - Category
+  /category/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted category
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Category'
+              type: object
+        "404":
+          description: Failed to delete category
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete a category
+      tags:
+      - Category
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved category
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Category'
+              type: object
+        "404":
+          description: Failed to retrieve category
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get a category by ID
+      tags:
+      - Category
+    put:
+      consumes:
+      - multipart/form-data
+      description: Updates a category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category Name
+        in: formData
+        name: name
+        type: string
+      - description: Category Image
+        in: formData
+        name: images
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Category updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Category'
+              type: object
+        "400":
+          description: Bad request, invalid data
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: Category not found
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Update an existing category
+      tags:
+      - Category
+  /dashboard/bestSeller:
+    get:
+      description: Get the list of best seller products based on sales.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.BestSeller'
+                  type: array
+              type: object
+        "400":
+          description: Error Response
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Retrieve best seller products
+      tags:
+      - Dashboard
+  /dashboard/earning:
+    get:
+      description: Get the total earning data from the dashboard service.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Error Response
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Retrieve total earning from dashboard
+      tags:
+      - Dashboard
+  /dashboard/revenue:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the monthly revenue
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved monthly revenue
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Revenue'
+                  type: array
+              type: object
+        "400":
+          description: Error retrieving monthly revenue
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get monthly revenue
+      tags:
+      - Dashboard
+  /dashboard/summary:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the summary of earnings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved summary
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Summary'
+              type: object
+        "400":
+          description: Error retrieving summary
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get summary of earnings
+      tags:
+      - Dashboard
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: authenticate user
+      parameters:
+      - description: ' '
+        in: body
+        name: domain.User
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user authenticated
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "401":
+          description: invalid username and/or password
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: User login
+      tags:
+      - Auth
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: Get customer orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: orders retrieved
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: no data found
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Customer orders
+      tags:
+      - Order
+  /orders/:id:
+    get:
+      consumes:
+      - application/json
+      description: Get customer order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: order retrived
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: no data found
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "422":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Customer order
+      tags:
+      - Order
+    put:
+      consumes:
+      - application/json
+      description: Update customer order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: order updated
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: no data found
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "422":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Customer order
+      tags:
+      - Order
+  /password-reset:
+    post:
+      consumes:
+      - application/json
+      description: request password reset
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: password reset link sent
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: failed to reset password
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Password Reset
+      tags:
+      - Auth
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Fetches a paginated list of all products
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved products
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Product'
+                  type: array
+              type: object
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: Products not found
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get all products with pagination
+      tags:
+      - Product
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new product with variants and images
+      parameters:
+      - description: Product Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Product SKU
+        in: formData
+        name: sku_product
+        required: true
+        type: string
+      - description: Product Price
+        in: formData
+        name: price
+        required: true
+        type: integer
+      - description: Product Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Product Images
+        in: formData
+        name: images
+        required: true
+        type: file
+      - description: Product Variants in JSON format
+        in: formData
+        name: variants
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Product created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+        "400":
+          description: Invalid form data
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Failed to create product
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create Product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product Deleted successfully
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: Failed to Delete product
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete Product
+      tags:
+      - Products
+    get:
+      consumes:
+      - application/json
+      description: Get Product By ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully Retrieved Product
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: Product Not Found
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Product By ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update the details of a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: Product SKU
+        in: body
+        name: sku_product
+        required: true
+        schema:
+          type: string
+      - description: Product Price
+        in: body
+        name: price
+        required: true
+        schema:
+          type: integer
+      - description: Product Description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product Updated successfully
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Failed to Update product
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Invalid Payload Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Update Product
+      tags:
+      - Products
+  /promotion:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint Fetch All Promotion
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get All Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Promotion'
+                  type: array
+              type: object
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get All Promotion
+      tags:
+      - promotions
+    post:
+      consumes:
+      - application/json
+      description: Create a new promotion by sending the promotion data in the request
+        body
+      parameters:
+      - description: Promotion data
+        in: body
+        name: promotion
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Promotion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Promotion details
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Promotion'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create a new promotion
+      tags:
+      - promotions
+  /promotion/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a promotion by its ID from the database
+      parameters:
+      - description: Promotion ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Promotion details
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Promotion'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete a promotion by ID
+      tags:
+      - promotions
+    get:
+      consumes:
+      - application/json
+      description: Get details of a specific promotion using the provided ID
+      parameters:
+      - description: Promotion ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Promotion details
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Promotion'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get a promotion by ID
+      tags:
+      - promotions
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register staff
+      parameters:
+      - description: ' '
+        in: body
+        name: domain.User
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: login successfully
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: server error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Staff Registration
+      tags:
+      - Auth
+  /stock/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete stock by product variant ID.
+      parameters:
+      - description: Product Variant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Stock deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Stock'
+              type: object
+        "400":
+          description: Invalid parameters or bad request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete Stock
+      tags:
+      - Stock
+  /stock/{productVariantId}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of the stock by product variant ID.
+      parameters:
+      - description: Product Variant ID
+        in: path
+        name: productVariantId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Stock details retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ResponseStock'
+              type: object
+        "400":
+          description: Invalid parameters or bad request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Stock Details
+      tags:
+      - Stock
+    put:
+      consumes:
+      - application/json
+      description: Edit the stock quantity by product variant ID.
+      parameters:
+      - description: Product Variant ID
+        in: path
+        name: productVariantId
+        required: true
+        type: integer
+      - description: New Stock Quantity
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.FormStock'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Stock updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Stock'
+              type: object
+        "400":
+          description: Invalid parameters or bad request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Edit Stock Details
+      tags:
+      - Stock
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: email must be valid when users want to reset their passwords
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: email is valid
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "404":
+          description: user not found
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Check Email
+      tags:
+      - Auth
+schemes:
+- http
+securityDefinitions:
+  token:
+    in: header
+    name: token
+    type: apiKey
+swagger: "2.0"
